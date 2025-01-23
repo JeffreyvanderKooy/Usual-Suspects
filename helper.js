@@ -1,5 +1,5 @@
 export async function getAllUsers(db) {
-  const query = 'SELECT id, name FROM users;';
+  const query = 'SELECT id, name, admin FROM users;';
 
   try {
     const res = await db.query(query);
@@ -11,7 +11,7 @@ export async function getAllUsers(db) {
 
 export async function getUser(name, pin, db) {
   const query = `
-    SELECT id, name FROM users
+    SELECT id, name, admin FROM users
     WHERE name = $1 AND pin = $2;
   `;
 

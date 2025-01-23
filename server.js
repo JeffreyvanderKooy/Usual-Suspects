@@ -22,6 +22,7 @@ const allowedOrigin = process.env.CORS_ALLOWED_ORIGIN;
 app.use(
   cors({
     origin: allowedOrigin,
+    credentials: true, // Allow credentials (cookies, headers, etc.)
   })
 );
 // postgress data //
