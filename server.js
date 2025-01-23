@@ -22,12 +22,11 @@ dotenv.config(); // init dotenv
 app.use(bodyParser.json()); // To parse JSON bodies
 app.use(bodyParser.urlencoded({ extended: true })); // To parse URL-encoded data (form submissions)
 
-// Only allow requests from this server
-const allowedOrigin = process.env.CORS_ALLOWED_ORIGIN;
 app.use(
   cors({
-    origin: allowedOrigin,
+    origin: 'http://localhost:1234',
     credentials: true, // Allow credentials (cookies, headers, etc.)
+    methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
   })
 );
 // postgress data //
@@ -106,7 +105,7 @@ app.post('/register', async (req, res) => {
 // Reserves a item for given raid
 app.post('/reserve', async (req, res) => {
   try {
-    const { item, id, name, raid } = req.query;
+    const { item, id, name, raid } = req.body;
 
     if (!item) throw new Error('Missing parameter: item!');
     if (!id) throw new Error('Missing parameter: ID!');
