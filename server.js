@@ -11,6 +11,7 @@ import express from 'express';
 import pg from 'pg';
 import dotenv from 'dotenv';
 import cors from 'cors';
+import bodyParser from 'body-parser';
 
 const app = express();
 const port = process.env.PORT || 3000; // Render will provide the port in process.env.PORT
