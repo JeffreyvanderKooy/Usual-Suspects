@@ -11,7 +11,7 @@ export async function getAllUsers(db) {
 
 export async function getUser(name, pin, db) {
   const query = `
-    SELECT * FROM users
+    SELECT id, name FROM users
     WHERE name = $1 AND pin = $2;
   `;
 
@@ -31,6 +31,13 @@ export async function getUser(name, pin, db) {
 }
 
 export async function insertUser(name, pin, db) {
+  const { rows: user } = await db.query('SELECT * FROM users WHERE name = $1', [
+    name,
+  ]);
+
+  if (user.length > 0)
+    throw new Error('An account with this character name already exists!');
+
   const query = `
     INSERT INTO users (name, pin)
     VALUES ($1, $2)
@@ -67,7 +74,12 @@ export async function getItems(raid, db) {
 export async function submitItem(data, db) {
   const { id, item, name, raid } = data;
 
-  const query = `
+  const { rows } = await db.query(`SELECT * FROM ${raid} WHERE id = $1`, [id]);
+
+  if (rows.length > 0)
+    await db.query('DELETE FROM blackwing_lair WHERE id = $1', [id]);
+
+  const query = ` 
     INSERT INTO ${raid} (id, item, name)
     VALUES ($1, $2, $3)
      RETURNING id, name, item, TO_CHAR(date, 'DD/MM/YY, HH24:MI') AS formatted_date;

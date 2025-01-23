@@ -68,6 +68,7 @@ app.post('/login', async (req, res) => {
   try {
     const { name, pin } = req.query;
 
+    if (!pin) throw new Error('Please enter a pin.');
     if (pin.length !== 4) throw new Error('Pin must be 4 characters long.');
     if (!name) throw new Error('Please enter your ingame character name.');
 
@@ -84,6 +85,7 @@ app.post('/register', async (req, res) => {
   try {
     const { name, pin } = req.query;
 
+    if (!pin) throw new Error('Please enter a pin.');
     if (pin.length !== 4) throw new Error('Pin must be 4 characters long.');
     if (!name) throw new Error('Please enter your ingame character name.');
 
@@ -100,8 +102,10 @@ app.post('/reserve', async (req, res) => {
   try {
     const { item, id, name, raid } = req.query;
 
-    if (!item || !id || !raid || !name)
-      throw new Error('Oops something went wrong!');
+    if (!item) throw new Error('Missing parameter: item!');
+    if (!id) throw new Error('Missing parameter: ID!');
+    if (!name) throw new Error('Missing parameter: name!');
+    if (!raid) throw new Error('Missing parameter: raid!');
 
     const data = {
       item: capitalize(item),
@@ -110,9 +114,9 @@ app.post('/reserve', async (req, res) => {
       name: capitalize(name),
     };
 
-    const result = await submitItem(data, db);
+    const { rows } = await submitItem(data, db);
 
-    res.send({ ok: true, result });
+    res.send({ ok: true, result: rows });
   } catch (error) {
     res.status(400).send({ ok: false, message: error.message });
   }
