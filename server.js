@@ -17,6 +17,10 @@ const port = process.env.PORT || 3000; // Render will provide the port in proces
 
 dotenv.config(); // init dotenv
 
+// Use body-parser middleware
+app.use(bodyParser.json()); // To parse JSON bodies
+app.use(bodyParser.urlencoded({ extended: true })); // To parse URL-encoded data (form submissions)
+
 // Only allow requests from this server
 const allowedOrigin = process.env.CORS_ALLOWED_ORIGIN;
 app.use(
@@ -67,7 +71,7 @@ app.get('/raid', async (req, res) => {
 // Login function
 app.post('/login', async (req, res) => {
   try {
-    const { name, pin } = req.query;
+    const { name, pin } = req.body;
 
     if (!pin) throw new Error('Please enter a pin.');
     if (pin.length !== 4) throw new Error('Pin must be 4 characters long.');
@@ -84,7 +88,7 @@ app.post('/login', async (req, res) => {
 // register function
 app.post('/register', async (req, res) => {
   try {
-    const { name, pin } = req.query;
+    const { name, pin } = req.body;
 
     if (!pin) throw new Error('Please enter a pin.');
     if (pin.length !== 4) throw new Error('Pin must be 4 characters long.');
