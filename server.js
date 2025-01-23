@@ -24,11 +24,12 @@ app.use(bodyParser.urlencoded({ extended: true })); // To parse URL-encoded data
 
 app.use(
   cors({
-    origin: 'http://localhost:1234',
+    origin: process.env.CORS_ALLOWED_ORIGIN,
     credentials: true, // Allow credentials (cookies, headers, etc.)
     methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allowed HTTP methods
   })
 );
+
 // postgress data //
 const db = new pg.Client({
   user: process.env.DB_USER,
