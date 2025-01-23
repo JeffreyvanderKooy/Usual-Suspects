@@ -74,6 +74,7 @@ app.post('/login', async (req, res) => {
   try {
     const { name, pin } = req.body;
 
+    // validate payload
     if (!pin) throw new Error('Please enter a pin.');
     if (pin.length !== 4) throw new Error('Pin must be 4 characters long.');
     if (!name) throw new Error('Please enter your ingame character name.');
@@ -91,6 +92,7 @@ app.post('/register', async (req, res) => {
   try {
     const { name, pin } = req.body;
 
+    // validate payload
     if (!pin) throw new Error('Please enter a pin.');
     if (pin.length !== 4) throw new Error('Pin must be 4 characters long.');
     if (!name) throw new Error('Please enter your ingame character name.');
@@ -108,6 +110,7 @@ app.post('/reserve', async (req, res) => {
   try {
     const { item, id, name, raid } = req.body;
 
+    // validate payload
     if (!item) throw new Error('Missing parameter: item!');
     if (!id) throw new Error('Missing parameter: ID!');
     if (!name) throw new Error('Missing parameter: name!');

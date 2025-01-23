@@ -1,3 +1,4 @@
+// Fetches all users from database
 export async function getAllUsers(db) {
   const query = 'SELECT id, name, admin FROM users;';
 
@@ -9,13 +10,14 @@ export async function getAllUsers(db) {
   }
 }
 
+// fetches a single user from database
 export async function getUser(name, pin, db) {
   const query = `
-    SELECT id, name, admin FROM users
-    WHERE name = $1 AND pin = $2;
+    SELECT id, name, admin, pin FROM users
+    WHERE name = $1;
   `;
 
-  const values = [name, pin]; // Use parameterized queries to prevent SQL injection
+  const values = [name]; // Use parameterized queries to prevent SQL injection
 
   try {
     const res = await db.query(query, values);
@@ -23,6 +25,7 @@ export async function getUser(name, pin, db) {
     const [user] = res.rows;
 
     if (!user) throw new Error('No user found! Have you made an account yet?');
+    if (user.pin != pin) throw new Error('Wrong pin!');
 
     return user;
   } catch (err) {
@@ -30,14 +33,18 @@ export async function getUser(name, pin, db) {
   }
 }
 
+// inserts a new user into the database
 export async function insertUser(name, pin, db) {
+  // check if there already is a user with this name
   const { rows: user } = await db.query('SELECT * FROM users WHERE name = $1', [
     name,
   ]);
 
+  // if so throw error
   if (user.length > 0)
     throw new Error('An account with this character name already exists!');
 
+  // add new user into database
   const query = `
     INSERT INTO users (name, pin)
     VALUES ($1, $2)
@@ -53,7 +60,9 @@ export async function insertUser(name, pin, db) {
   }
 }
 
+// get items for given raid from database
 export async function getItems(raid, db) {
+  // retrieves all items from database for given raid
   const query = `
     SELECT 
       id, 
@@ -71,14 +80,18 @@ export async function getItems(raid, db) {
   }
 }
 
+// submit a item to reserve to database
 export async function submitItem(data, db) {
   const { id, item, name, raid } = data;
 
+  // see if there is a item reserved already for this user
   const { rows } = await db.query(`SELECT * FROM ${raid} WHERE id = $1`, [id]);
 
+  // if there is an item delete it from the database
   if (rows.length > 0)
     await db.query('DELETE FROM blackwing_lair WHERE id = $1', [id]);
 
+  // insert new item into databse
   const query = ` 
     INSERT INTO ${raid} (id, item, name)
     VALUES ($1, $2, $3)
