@@ -5,6 +5,7 @@ import {
   getItems,
   submitItem,
   insertUser,
+  incrementAttendance,
 } from './helper.js';
 
 import express from 'express';
@@ -100,6 +101,22 @@ app.post('/register', async (req, res) => {
     const { rows: user } = await insertUser(name.toLowerCase(), pin, db);
 
     res.send({ ok: true, data: user });
+  } catch (error) {
+    res.status(400).send({ ok: false, message: error.message });
+  }
+});
+
+app.post('/bonus', async (req, res) => {
+  try {
+    const { id, raid, bonus } = req.body;
+
+    if (!id) throw new Error('Missing parameter: ID!');
+    if (!raid) throw new Error('Missing parameter: Raid!');
+    if (!bonus) throw new Error('Missing parameter: Bonus!');
+
+    const response = await incrementAttendance(id, raid, bonus, db);
+
+    res.send({ ok: true, data: response });
   } catch (error) {
     res.status(400).send({ ok: false, message: error.message });
   }

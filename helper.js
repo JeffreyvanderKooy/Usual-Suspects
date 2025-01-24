@@ -68,7 +68,8 @@ export async function getItems(raid, db) {
       id, 
       name, 
       item, 
-      TO_CHAR(date, 'DD/MM/YY, HH24:MI') AS formatted_date 
+      TO_CHAR(date, 'DD/MM/YY, HH24:MI') AS formatted_date,
+      bonus
     FROM ${raid};
   `;
 
@@ -102,6 +103,30 @@ export async function submitItem(data, db) {
 
   try {
     const res = await db.query(query, values);
+    return res;
+  } catch (err) {
+    throw err;
+  }
+}
+
+export async function incrementAttendance(id, raid, bonus, db) {
+  const query = `
+                UPDATE ${raid}
+                SET bonus = $1
+                WHERE id = $2;
+                `;
+  const values = [bonus, id];
+
+  try {
+    await db.query(query, values);
+    const res = await db.query(
+      `SELECT id, 
+      name, 
+      item, 
+      TO_CHAR(date, 'DD/MM/YY, HH24:MI') AS formatted_date,
+      bonus FROM ${raid} WHERE id = $1;`,
+      [id]
+    );
     return res;
   } catch (err) {
     throw err;
