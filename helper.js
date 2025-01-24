@@ -89,7 +89,7 @@ export async function submitItem(data, db) {
 
   // if there is an item delete it from the database
   if (rows.length > 0)
-    await db.query('DELETE FROM blackwing_lair WHERE id = $1', [id]);
+    await db.query(`DELETE FROM ${raid} WHERE id = $1`, [id]);
 
   // insert new item into databse
   const query = ` 
